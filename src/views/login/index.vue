@@ -3,7 +3,7 @@
 		<div class="login-logo">
 			<img style="height: 40px; width: 100%;" src="@/assets/title.png" />
 		</div>
-		
+
 		<el-card class="login-card" shadow="hover">
 			<el-form ref="formRef" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
 				label-position="left">
@@ -14,15 +14,15 @@
 					<span class="svg-container">
 						<svg-icon name="ele-UserFilled" />
 					</span>
-					<el-input ref="username" v-model="loginForm.username" placeholder="Username" name="username"
-						type="text" tabindex="1" auto-complete="on" />
+					<el-input ref="username" v-model="loginForm.username" placeholder="用户名" name="username" type="text"
+						tabindex="1" auto-complete="on" />
 				</el-form-item>
 				<el-form-item prop="password">
 					<span class="svg-container">
 						<svg-icon name="ele-Lock" />
 					</span>
 					<el-input :key="passwordType" ref="passwordRef" v-model="loginForm.password" :type="passwordType"
-						placeholder="Password" name="password" tabindex="2" auto-complete="on"
+						placeholder="密码" name="password" tabindex="2" auto-complete="on"
 						@keyup.enter.native="handleLogin" />
 					<span class="show-pwd" @click="showPwd">
 						<svg-icon :name="passwordType === 'password' ? 'ele-Hide' : 'ele-View'" />
@@ -30,13 +30,21 @@
 				</el-form-item>
 				<el-form-item prop="code">
 					<span class="svg-container">
-						<svg t="1733215516793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2040" width="16" height="16"><path d="M512 85.333333L149.333333 207.232v365.738667C149.333333 774.912 311.722667 938.666667 512 938.666667s362.666667-163.754667 362.666667-365.696V207.232L512 85.333333z m294.656 487.637334c0 164.096-131.925333 297.130667-294.656 297.130666-162.730667 0-294.656-133.034667-294.656-297.130666V258.688L512 153.898667l294.656 104.789333v314.282667z m-420.864-96.128a33.749333 33.749333 0 0 0-48.042667 0 34.346667 34.346667 0 0 0 0 48.512l122.282667 123.178666 1.962667 1.962667a31.914667 31.914667 0 0 0 45.397333 0l211.157333-212.864a32.426667 32.426667 0 0 0 0-45.781333l-2.688-2.688a31.914667 31.914667 0 0 0-45.44 0l-185.813333 187.306666-98.773333-99.626666h-0.042667z" fill="#515151" p-id="2041"></path></svg>
+						<svg t="1733215516793" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="2040" width="16" height="16">
+							<path
+								d="M512 85.333333L149.333333 207.232v365.738667C149.333333 774.912 311.722667 938.666667 512 938.666667s362.666667-163.754667 362.666667-365.696V207.232L512 85.333333z m294.656 487.637334c0 164.096-131.925333 297.130667-294.656 297.130666-162.730667 0-294.656-133.034667-294.656-297.130666V258.688L512 153.898667l294.656 104.789333v314.282667z m-420.864-96.128a33.749333 33.749333 0 0 0-48.042667 0 34.346667 34.346667 0 0 0 0 48.512l122.282667 123.178666 1.962667 1.962667a31.914667 31.914667 0 0 0 45.397333 0l211.157333-212.864a32.426667 32.426667 0 0 0 0-45.781333l-2.688-2.688a31.914667 31.914667 0 0 0-45.44 0l-185.813333 187.306666-98.773333-99.626666h-0.042667z"
+								fill="#515151" p-id="2041"></path>
+						</svg>
 					</span>
-					<el-input placeholder="验证码" tabindex="2" auto-complete="on" style="width: 55%;"/>
-					<img src="@/assets/code.png" style="width: 36%; position: absolute;right: 0px;" alt="">
+					<el-input placeholder="验证码" name="code" v-model="loginForm.code" tabindex="2" auto-complete="on"
+						style="width: 55%;" />
+					<img :src="base64ImageUrl" style="width: 36%; position: absolute;right: 0px;" alt="验证码"
+						@click='handleCaptcha'>
 				</el-form-item>
-				<el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;height: 40px;"
-					@click.native.prevent="handleLogin">登 陆</el-button>
+				<el-button :loading="loading" :disabled="!disabled" type="primary"
+					style="width:100%;margin-bottom:30px;height: 40px;" @click.native.prevent="handleLogin">登
+					陆</el-button>
 			</el-form>
 		</el-card>
 		<div class="login-copyright">
@@ -44,7 +52,7 @@
 				<a ref="https://beian.miit.gov.cn" style="display: inline;">豫ICP备19020917号 </a>
 				<p style="display: inline;"> Copyright © 2022 - 2024 河南新网元通信技术有限公司</p>
 			</div>
-			
+
 		</div>
 	</div>
 </template>
@@ -58,25 +66,34 @@ export default {
 <script lang="ts" setup>
 import { useUserInfoStore } from '@/stores/userInfo'
 import type { FormInstance } from 'element-plus'
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { HexGenerator, ImageUtils } from '@/utils/generator-hex'
+import { Encrypt } from '@/utils/encryption'
+import { reqCaptcha } from '@/api/user'
 
+// 获取 用户仓库
 const userInfoStore = useUserInfoStore()
 const route = useRoute()
 const router = useRouter()
 const loginForm = ref({
-	username: 'admin',
-	password: '111111'
+	username: '',
+	password: '',
+	code: '',
+	key: ''
 })
 const loading = ref(false)
+const disabled = ref<boolean>(true)
 const passwordType = ref('password')
 const redirect = ref('')
 const passwordRef = ref<HTMLInputElement>()
 const formRef = ref<FormInstance>()
+const randomId = ref(HexGenerator.generateHex())
+const base64ImageUrl = ref('')
 
 const validateUsername = (rule: any, value: any, callback: any) => {
 	if (value.length < 4) {
-		callback(new Error('用户名长度不能小于4位'))
+		callback(new Error('用户名长度不能小于1位'))
 	} else {
 		callback()
 	}
@@ -88,10 +105,17 @@ const validatePassword = (rule: any, value: any, callback: any) => {
 		callback()
 	}
 }
-
+const validateCode = (rule: any, value: any, callback: any) => {
+	if (value.length < 1) {
+		callback(new Error('验证码不能为空'))
+	} else {
+		callback()
+	}
+}
 const loginRules = {
 	username: [{ required: true, validator: validateUsername }],
-	password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+	password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+	code: [{ required: true, trigger: 'blur', validator: validateCode }]
 }
 
 watch(
@@ -101,6 +125,18 @@ watch(
 	},
 	{ immediate: true }
 )
+
+watch(() => {
+	return (loginForm.value.username !== '') && (loginForm.value.password !== '') && (loginForm.value.code !== '')
+}, (newValue, oldValue) => {
+	disabled.value = newValue
+}, {
+	immediate: true
+})
+
+onMounted(() => {
+	getCaptcha(randomId.value)
+})
 
 /* 
 切换密码的显示/隐藏
@@ -122,21 +158,46 @@ const showPwd = () => {
 const handleLogin = async () => {
 	await formRef.value?.validate()
 	loading.value = true
-	const { username, password } = loginForm.value
+	let { username, password, code, key } = loginForm.value
+	// 加密
+	password = Encrypt(password)
+	key = randomId.value
 	try {
-		await userInfoStore.login(username, password)
+		await userInfoStore.login(username, password, code, key)
+		// 路由跳转
 		router.push({ path: redirect.value || '/' })
-	} finally {
+	} catch (error) {
+		if(error){
+			getCaptcha(randomId.value)
+		}
+	}
+	finally {
 		loading.value = false
 	}
 }
+// 获取验证码回调
+const handleCaptcha = () => {
+	getCaptcha(randomId.value)
+}
+// 获取验证码
+const getCaptcha = async (randomId: any) => {
+	// 这里是从 HTTP 请求中得到的 ArrayBuffer 数据
+	const res: any = await reqCaptcha(randomId)
+	// 使用 ImageUtils 将 ArrayBuffer 转换为 Base64 编码的图片 URL
+	ImageUtils.arrayBufferToBase64Image(res.data, 'image/png')
+		.then(base64Image => {
+			base64ImageUrl.value = base64Image as string;  // 打印出 Base64 编码的图片 URL
+		})
+		.catch(error => console.error('Error converting to Base64:', error));
+}
+
 </script>
 
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg: #283443;
+$bg: #E5E5E5;
 $light_gray: #220808;
 $cursor: #a9a5a5;
 
@@ -152,7 +213,7 @@ $cursor: #a9a5a5;
 	background-color: #2d3a4b;
 	background-size: cover;
 	background-position: center;
-    background-repeat: no-repeat;
+	background-repeat: no-repeat;
 
 	.el-input {
 		display: inline-block;
@@ -188,7 +249,8 @@ $cursor: #a9a5a5;
 		border-radius: 20px;
 		color: #454545;
 	}
-	.el-button{
+
+	.el-button {
 		border-radius: 20px;
 	}
 }
@@ -205,19 +267,22 @@ $light_gray: #eee;
 	width: 100%;
 	background-color: $bg;
 	overflow: hidden;
-	.login-logo{
+
+	.login-logo {
 		position: absolute;
 		top: 33px;
 		left: 50px;
 		height: 40px;
-		
+
 	}
-	.login-card{
+
+	.login-card {
 		position: absolute;
 		width: 520px;
 		right: 10%;
-		top:10%;
+		top: 10%;
 	}
+
 	.login-form {
 		max-width: 100%;
 		padding: 10px 35px 0;
@@ -247,9 +312,10 @@ $light_gray: #eee;
 
 	.title-container {
 		position: relative;
+
 		.title {
 			margin: 0 auto 0 auto;
-			font-family:"PingFangSC-Regular";
+			font-family: "PingFangSC-Regular";
 			font-size: 22px;
 			text-align: center;
 			color: #151010;
@@ -267,7 +333,8 @@ $light_gray: #eee;
 		cursor: pointer;
 		user-select: none;
 	}
-	.login-copyright{
+
+	.login-copyright {
 		display: inline-block;
 		position: absolute;
 		bottom: 4px;
@@ -277,7 +344,7 @@ $light_gray: #eee;
 		color: #7a7a7c;
 		line-height: 17px;
 		font-style: normal;
-		left:50%;
+		left: 50%;
 		margin-left: -244px;
 	}
 }

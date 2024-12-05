@@ -1,5 +1,5 @@
 import { defineConfig, loadEnv, type ConfigEnv } from "vite";
-import {resolve} from 'path'
+import { resolve } from 'path'
 
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
@@ -38,5 +38,15 @@ export default defineConfig((mode: ConfigEnv) => {
         ],
       },
     },
+    // 设置代理服务器
+    server: {
+      proxy: {
+        '/app-dev': {
+          target: 'http://jdgz.xwydl.com:8310',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/app-dev/, ''),
+        },
+      }
+    }
   };
 });

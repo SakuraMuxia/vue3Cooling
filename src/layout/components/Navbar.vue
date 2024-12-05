@@ -5,13 +5,11 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <div class="right-menu-item">{{userInfoStore.name}}</div>
-      <el-dropdown class="avatar-container" trigger="click">
+      <el-dropdown class="avatar-dropdown" trigger="hover">
         <div class="avatar-wrapper">
           <img v-if="userInfoStore.avatar" :src="userInfoStore.avatar" class="user-avatar">
-          <el-icon class="el-icon-caret-bottom">
-            <arrow-down />
-          </el-icon>
+          <div class="user-name">{{ userInfoStore.name }}</div>
+          <ele-ArrowRight class="el-icon-caret-bottom"></ele-ArrowRight>
         </div>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
@@ -23,15 +21,16 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
-      </el-dropdown> 
+      </el-dropdown>
+
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  export default {
-    name: 'Navbar'
-  }
+export default {
+  name: 'Navbar'
+}
 </script>
 
 <script lang="ts" setup>
@@ -64,7 +63,7 @@ const logout = async () => {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -72,7 +71,7 @@ const logout = async () => {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
@@ -86,53 +85,59 @@ const logout = async () => {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 64px;
 
     &:focus {
       outline: none;
     }
 
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
+    .avatar-dropdown {
+      margin-top: 5px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        width: 160px;
         position: relative;
+        top: -7px;
+        right: 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
 
-        .user-avatar {
+        &:hover {
+          transition-duration: 1s;
+          background-color: #e9e9e9;
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          >:nth-child(3){
+            transition: transform 0.5s ease;
+            transform:rotate(90deg);
+          }
+        }
+        .user-avatar {
+          padding: 4px;
+          width: 50px;
+          height: 50px;
+          border-radius: 25px;
+        }
+
+        .user-name {
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden; 
+          text-overflow: ellipsis;
+          max-width: 140px;
+          font-weight: 500;
+          font-size: 15px;
         }
 
         .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          width: 16px;
         }
       }
     }
+
   }
+}
+::deep(.el-popper){
+  padding: 30px!important;
 }
 </style>

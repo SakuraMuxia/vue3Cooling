@@ -11,9 +11,16 @@ export default {
 </script>
 <script lang="ts" setup>
 import { useUserInfoStore } from '@/stores/userInfo';
-
+import { onMounted } from 'vue';
 const userInfoStore = useUserInfoStore()
+onMounted(()=>{
 
+})
+// 获取用户信息
+const getUserInfo =async () =>{
+  const result = await userInfoStore.getInfo()
+  console.log(result)
+}
 </script>
 
 <style scoped>
