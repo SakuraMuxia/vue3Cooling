@@ -48,7 +48,8 @@
   width: 100%;
   height: 50px;
   line-height: 50px;
-  background: #2b2f3a;
+  background-image: linear-gradient(to bottom,#D5E3FF,#FCFDFF);
+  // background: #F2F6FF;
   text-align: center;
   overflow: hidden;
 
@@ -57,16 +58,16 @@
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
+      width: 45px;
       height: 32px;
       vertical-align: middle;
-      margin-right: 12px;
+      margin-right: 8px;
     }
 
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: #484848;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;

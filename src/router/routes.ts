@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
+import DeviceList from '@/views/core/device/list.vue'
 /**
  * 路由meta对象参数说明
  * meta: {
@@ -11,49 +12,41 @@ import type { RouteRecordRaw } from 'vue-router';
 /**
  * 静态路由（默认路由）
  */
- export const staticRoutes: Array<RouteRecordRaw> = [
-	{
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/views/login/index.vue'),
-    meta: {
-      hidden: true
-    }
-  },
+export const staticRoutes: Array<RouteRecordRaw> = [
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/views/login/index.vue'),
+        meta: {
+            hidden: true
+        }
+    },
+    
 
-  {
-    path: '/404',
-    name: '404',
-    component: () => import('@/views/error/404.vue'),
-    meta: {
-      hidden: true
-    }
-  },
+    {
+        path: '/404',
+        name: '404',
+        component: () => import('@/views/error/404.vue'),
+        meta: {
+            hidden: true
+        }
+    },
 
-  {
-    path: '/',
-    component: () => import('@/layout/index.vue'),
-    redirect: '/home',
-    children: [{
-      path: 'home',
-      name: 'Home',
-      component: () => import('@/views/home/index.vue'),
-      meta: { 
-        title: '首页', 
-        icon: 'ele-HomeFilled', 
-      }
-    }]
-  },
-
-  /* 匹配任意的路由 必须最后注册 */
-  { 
-    path: '/:pathMatch(.*)', 
-    name: 'Any',
-    redirect: '/404', 
-    meta: {
-      hidden: true 
-    }
-  }
+    {
+        path: '/',
+        component: () => import('@/layout/index.vue'),
+        redirect: '/home',
+        children: [{
+            path: 'home',
+            name: 'Home',
+            component: () => import('@/views/home/index.vue'),
+            meta: {
+                title: '首页',
+                icon: 'ele-HomeFilled',
+            }
+        }]
+    },
+    
 ];
 
 
@@ -61,3 +54,15 @@ import type { RouteRecordRaw } from 'vue-router';
  * 定义动态路由
  */
 export const allAsyncRoutes: Array<RouteRecordRaw> = [];
+// 任意路由
+export const arbitraryRoutes: Array<RouteRecordRaw> = [
+    /* 匹配任意的路由 必须最后注册 */
+    {
+        path: '/:pathMatch(.*)',
+        name: 'Any',
+        redirect: '/404',
+        meta: {
+            hidden: true
+        }
+    }
+]

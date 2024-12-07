@@ -5,10 +5,10 @@
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
-        background-color="#304156"
-        text-color="#bfcbd9"
+        text-color="#484848"
+        
+        active-text-color="#5472EC"
         :unique-opened="false"
-        active-text-color="#409EFF"
         :collapse-transition="false"
         mode="vertical"
       >
@@ -51,3 +51,8 @@ const showLogo = computed(() => settingsStore.sidebarLogo)
 const isCollapse = computed(() => !appStore.sidebar.opened)
 
 </script>
+<style lang="scss">
+::v-deep #app .sidebar-container .scrollbar-wrapper{
+  background-color: aliceblue!important;
+}
+</style>

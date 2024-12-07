@@ -30,14 +30,14 @@ router.beforeEach(async (to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else { // 请求的不是登陆路由
-      // 是否已经登陆
+      // 是否有用户信息:用户名是否存在
       const hasLogin = !!userInfoStore.name
-      // 如果已经登陆直接放行
+      // 内存中(pinia)有用户信息=>已经登陆
       if (hasLogin) {
         next()
-      } else { // 如果还没有登陆
+      } else { // 内存中没有用户信息(没有登陆或刷新了页面)
         try {
-          // 异步请求获取用户信息(包含权限数据) ==> 动态注册用户的权限路由 => 当次跳转不可见
+          // 发送请求获取用户信息
           await userInfoStore.getInfo()
           next(to) // 重新跳转去目标路由, 能看到动态添加的异步路由, 且不会丢失参数
           NProgress.done() // 结束进度条

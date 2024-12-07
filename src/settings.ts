@@ -6,7 +6,7 @@ export default {
   /* 
   主界面左侧Logo标题
   */
-  title: '新网元高效热管理系统',
+  title: '高效热管理平台',
 
   /* 
   是否固定主界面的Header部分
