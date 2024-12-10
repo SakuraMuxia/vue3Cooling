@@ -8,11 +8,15 @@ import router from './router'
 import './styles/index.scss'
 import ElSvg from './components/SvgIcon/ElSvg'
 import './permission'
+import VueEcharts from 'vue-echarts'
+
+
 const app = createApp(App)
 ElSvg(app)
+app.component('v-chart', VueEcharts);
 app.use(pinia)
-  .use(router)
-  .use(ElementPlus, {
-    locale: zhCn,
-  })
-  .mount('#app')
+    .use(router)
+    .use(ElementPlus, {
+        locale: zhCn,
+    })
+    .mount('#app')

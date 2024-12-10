@@ -1,33 +1,30 @@
 <template>
-  <div class="home">
-    Hello, {{userInfoStore.name}}
-  </div>
+    <div class="home">
+        <Top></Top>
+        <Mid></Mid>
+    </div>
 </template>
 
 <script lang="ts">
 export default {
-  name: 'Home',
+    name: 'Home',
 }
 </script>
 <script lang="ts" setup>
-import { useUserInfoStore } from '@/stores/userInfo';
 import { onMounted } from 'vue';
-const userInfoStore = useUserInfoStore()
-onMounted(()=>{
+import Top from '@/views/home/TopChart/index.vue'
+import Mid from '@/views/home/MidChart/index.vue'
+onMounted(() => {
 
 })
 // 获取用户信息
-const getUserInfo =async () =>{
-  const result = await userInfoStore.getInfo()
-  console.log(result)
-}
+
 </script>
 
 <style scoped>
-  .home {
+.home {
     width: 100%;
     height: 100%;
-    padding: 20px;
     font-size: 30px;
-  }
+}
 </style>
