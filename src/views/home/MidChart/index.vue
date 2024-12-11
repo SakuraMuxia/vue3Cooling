@@ -1,6 +1,6 @@
 <template>
  <el-row :gutter="10">
-    <el-col :span="15">
+    <el-col :span="14">
         <Map></Map>
     </el-col>
     <el-col :span="9">
