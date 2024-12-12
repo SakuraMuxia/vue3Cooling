@@ -36,7 +36,7 @@ export const toolTipData = [
     
 ];
 // 地图数据
-export const geoCoordMap = {
+export const geoCoordMap:Record<string,[number,number]> = {
     '黑龙江': [127.9688, 45.368],
     '内蒙古': [110.3467, 41.4899],
     "吉林": [125.8154, 44.2584],
